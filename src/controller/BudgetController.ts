@@ -25,7 +25,7 @@ export class BudgetController {
     static create = async (req: Request, res: Response) => {
 
         try {
-            const buget = new Budget(req.body)
+            const buget = await Budget.create(req.body)
             buget.userId = req.user.id
             await buget.save()
             res.status(201).json('Presupuesto creado')

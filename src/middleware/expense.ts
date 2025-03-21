@@ -22,7 +22,7 @@ export const validateExpenseInput= async (req: Request, res: Response, next: Nex
     next()
    
 }
-export const validateExpenseExits = async (req: Request, res: Response, next: NextFunction) => {
+export const validateExpenseExists = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
         const { expenseId } = req.params
@@ -30,8 +30,8 @@ export const validateExpenseExits = async (req: Request, res: Response, next: Ne
         const expense = await Expense.findByPk(expenseId)
 
         if(!expense) {
-            const error = new Error("Gasto no encontrado")
-            res.status(400).json({error: error.message})
+            const error = new Error('Gasto no encontrado')
+            res.status(404).json({error: error.message})
             return
         }
         req.expense = expense

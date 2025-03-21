@@ -16,11 +16,10 @@ router.post('/create-account',
     body('password').isLength({ min: 8 }).withMessage('El password es muy corto mínimo 8 caracteres'),
     body('email').isEmail().withMessage('E-mail no valido'),
     handleInputErrors,
-    AuthController.createAccound)
+    AuthController.createAccount)
 
 router.post('/confirm-account',
     body('token')
-        .notEmpty()
         .isLength({ min: 6, max: 6 })
         .withMessage('Token no válido'),
     handleInputErrors,
@@ -40,7 +39,6 @@ router.post('/forgot-password',
 
 router.post('/validate-token',
     body('token')
-        .notEmpty()
         .isLength({ min: 6, max: 6 })
         .withMessage('Token no válido'),
     handleInputErrors,
@@ -49,7 +47,6 @@ router.post('/validate-token',
 
 router.post('/reset-password/:token',
     param('token')
-        .notEmpty()
         .isLength({ min: 6, max: 6 })
         .withMessage('Token no válido'),
     body('password')

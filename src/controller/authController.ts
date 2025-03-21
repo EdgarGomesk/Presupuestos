@@ -8,7 +8,7 @@ import { authenticate } from "../middleware/auth"
 
 export class AuthController {
 
-    static createAccound = async (req: Request, res: Response) => {
+    static createAccount = async (req: Request, res: Response) => {
         const { email, password } = req.body
 
         // prevenir dublipacados
@@ -20,19 +20,27 @@ export class AuthController {
             const error = new Error('El usuario ya existe')
             res.status(409).json({ error: error.message })
             return
-        }
+        }const createAccountMock = jest.spyOn(AuthController, 'createAccount')
         try {
-            const user = new User(req.body)
+            const user = await User.create(req.body)
 
             user.password = await hashPasword(password)
-            user.token = generateToken()
+            
+            const token = generateToken();
+            user.token = token;
+
+            if(process.env.NODE_ENV !== 'production') {
+                globalThis.cashTrackrConfirmationToken = token
+            }
+
+           
             await user.save()
             await AuthEmail.sendConfirmationEmail({
                 name: user.name,
                 email: user.email,
                 token: user.token
             })
-            res.json('cuenta Creada Correctamente')
+            res.status(201).json('cuenta Creada Correctamente')
         } catch (error) {
             //console.log(error)
             res.status(500).json({ error: 'Hubo un error' })
@@ -42,7 +50,7 @@ export class AuthController {
     static confirmAccount = async (req: Request, res: Response) => {
         const { token } = req.body
 
-        const user = await User.findOne({ where: { token } })
+        const user = await User.findOne( { where: { token } } )
 
         if (!user) {
             const error = new Error('Token no valido')
